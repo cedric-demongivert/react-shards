@@ -2,9 +2,10 @@
   "name": "kernel",
   "version": "0.0.0",
   "description": "A front-end plugin system for React.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "karma start test.conf.js --single-run"
+    "test": "karma start karma.config.js --single-run",
+    "build": "gulp --production"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
     "babel-preset-react": "^6.23.0",
     "chai": "^3.5.0",
     "enzyme": "^2.7.1",
+    "gulp": "^3.9.1",
     "karma": "^1.5.0",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-chrome-launcher": "^2.0.0",
@@ -42,6 +44,8 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.2",
+    "laravel-elixir": "^6.0.0-15",
+    "laravel-elixir-webpack-official": "^1.0.10",
     "mocha": "^3.2.0",
     "react-addons-test-utils": "^15.4.2",
     "react-dom": "^15.4.2",

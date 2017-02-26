@@ -17,7 +17,7 @@ export const Namespaced = (BaseClass) => {
       return base
     }
 
-    plugin (path, component, scoped = true) {
+    plugin (path, component, scoped = !this.props.absolute) {
       if (scoped) {
         return this.context.kernel.plugin(
           this.props.name + '.' + path, component, scoped
@@ -27,7 +27,7 @@ export const Namespaced = (BaseClass) => {
       }
     }
 
-    plugout (path, component, scoped = true) {
+    plugout (path, component, scoped = !this.props.absolute) {
       if (scoped) {
         return this.context.kernel.plugout(
           this.props.name + '.' + path, component, scoped
@@ -37,7 +37,7 @@ export const Namespaced = (BaseClass) => {
       }
     }
 
-    getPlugged (path, scoped = true) {
+    getPlugged (path, scoped = !this.props.absolute) {
       if (scoped) {
         return this.context.kernel.getPlugged(
           this.props.name + '.' + path, scoped
@@ -47,7 +47,7 @@ export const Namespaced = (BaseClass) => {
       }
     }
 
-    hasPath (path, scoped = true) {
+    hasPath (path, scoped = !this.props.absolute) {
       if (scoped) {
         return this.context.kernel.hasPath(
           this.props.name + '.' + path, scoped
@@ -57,7 +57,7 @@ export const Namespaced = (BaseClass) => {
       }
     }
 
-    getPaths (scoped = true) {
+    getPaths (scoped = !this.props.absolute) {
       if (scoped) {
         return this.context.kernel.getPaths().filter(
                 (x) => {
@@ -88,11 +88,12 @@ export const Namespaced = (BaseClass) => {
   })
 
   result.defaultProps = assign({}, BaseClass.defaultProps, {
-    'children': null
+    'absolute': false
   })
 
   result.propTypes = assign({}, BaseClass.propTypes, {
-    'name': React.PropTypes.string.isRequired
+    'name': React.PropTypes.string.isRequired,
+    'absolute': React.PropTypes.bool
   })
 
   return result

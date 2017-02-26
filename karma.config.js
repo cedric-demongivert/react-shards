@@ -26,28 +26,7 @@ module.exports = function (config) {
       './test/**/*.jsx': ['webpack', 'sourcemap']
     },
 
-    webpack: {
-      devtool: 'inline-source-map',
-      module: {
-        loaders: [
-          {
-            test: /\.(js|jsx)$/,
-            exclude: /(node_modules|bower_components)/,
-            loader: 'babel-loader'
-          }
-        ]
-      },
-      resolve: {
-        extensions: ['.js', '.jsx']
-      },
-      externals: {
-        'jsdom': 'window',
-        'cheerio': 'window',
-        'react/lib/ExecutionEnvironment': true,
-        'react/addons': true,
-        'react/lib/ReactContext': 'window'
-      }
-    },
+    webpack: require('./webpack.config.js'),
 
     webpackMiddleware: {
       // webpack-dev-middleware configuration
