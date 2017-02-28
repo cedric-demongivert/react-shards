@@ -2,13 +2,21 @@ import React, { Component } from 'react'
 
 import { Endpoint } from './Endpoint'
 
-const STATUS_UNVISITED = 0
+const STATUS_UNRESOLVED = 0
 const STATUS_RESOLVING = 1
 const STATUS_RESOLVED = 2
 
+/**
+* Compose a bunch of component in regard of their contexts.
+*
+* ````jsx
+* <Compose name="endpoints.name">
+*   ...
+* </Compose>
+* ````
+*/
 @Endpoint
 export class Compose extends Component {
-
   /**
   * Resolve the component composition order and return it.
   *
@@ -18,7 +26,7 @@ export class Compose extends Component {
     let result = []
     let pluggedComponents = this.getPlugged()
     let status = this.getBaseStatus(pluggedComponents)
-    let services = this.getServicesMap(pluggedComponents)
+    let services = this.getContextMap(pluggedComponents)
 
     for (let index in pluggedComponents) {
       this.visit(index, {pluggedComponents, status, services, result})
@@ -27,7 +35,14 @@ export class Compose extends Component {
     return result
   }
 
-  getServicesMap (pluggedComponents) {
+  /**
+  * Return an object with exposed contexts as key, and an index list of
+  * components that expose these contexts as value.
+  *
+  * @param {Array<component>} pluggedComponents - A list of components.
+  * @return {Object} A context map.
+  */
+  getContextMap (pluggedComponents) {
     let result = {}
 
     for (let index in pluggedComponents) {
@@ -70,14 +85,14 @@ export class Compose extends Component {
     let result = []
 
     for (let index in components) {
-      result[index] = STATUS_UNVISITED
+      result[index] = STATUS_UNRESOLVED
     }
 
     return result
   }
 
   visit (index, { pluggedComponents, status, services, result }) {
-    if (status[index] === STATUS_UNVISITED) {
+    if (status[index] === STATUS_UNRESOLVED) {
       status[index] = STATUS_RESOLVING
 
       for (let dependency in this.getDependencies(pluggedComponents[index])) {
