@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Endpoint } from './Endpoint'
+import { Endpoint } from '../decorators/Endpoint'
 
 const STATUS_UNRESOLVED = 0
 const STATUS_RESOLVING = 1

@@ -1,7 +1,7 @@
 import React from 'react'
 import { assign } from 'lodash'
 
-import { Kernel } from './Kernel'
+import { Kernel } from '../components/Kernel'
 
 export const Namespaced = (BaseClass) => {
   let result = class extends BaseClass {

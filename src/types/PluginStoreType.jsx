@@ -7,63 +7,88 @@ export const PluginStoreType = React.PropTypes.shape({
   /**
   * Allow to plug arbitrary values into an endpoint.
   *
-  * @param {String} endpoint - Where we have to plug values.
-  * @param {any} ...values - Values to plug into the endpoint.
+  * ````es6
+  * pluginStore.push('path.to.the.endpoint', 1, 2, 3)
+  * pluginStore.push(['path', 'to', 'the', 'endpoint'], ...values)
+  * ````
+  *
+  * @param {String|Array<String>} endpoint - Where we have to push values.
+  * @param {any} ...values - Values to push into the endpoint.
+  *
+  * @return {PluginStoreType} An updated copy of this store.
   */
-  'plugin': React.PropTypes.func.isRequired,
+  'push': React.PropTypes.func.isRequired,
 
   /**
   * Allow to remove plugged values from an endpoint.
   *
-  * @param {String} endpoint - Where we have to remove values.
-  * @param {any} ...values - Values to remove.
+  * ````es6
+  * pluginStore.delete('path.to.the.endpoint', 1, 2)
+  * pluginStore.delete(['path', 'to', 'the', 'endpoint'])
+  * ````
+  *
+  * @param {String|Array<String>} endpoint - Where we have to remove values.
+  * @param {any} [...values = undefined] - Values to remove, if no value are passed, this method will remove all values attached to the endpoint.
+  *
+  * @return {PluginStoreType} An updated copy of this store.
   */
-  'plugout': React.PropTypes.func.isRequired,
+  'delete': React.PropTypes.func.isRequired,
 
   /**
   * Allow to remove plugged values from an endpoint that not fullfill a predicate.
   *
-  * @param {String} endpoint - Where we have to filter values.
+  * ````es6
+  * pluginStore.filter('path.to.the.endpoint', (element) => element > 2)
+  * pluginStore.filter(['path', 'to', 'the', 'endpoint'], (element) => element > 2)
+  * ````
+  *
+  * @param {String|Array<String>} endpoint - Where we have to filter values.
   * @param {Function} predicate - Predicate to fullfill.
+  *
+  * @return {PluginStoreType} An updated copy of this store.
   */
   'filter': React.PropTypes.func.isRequired,
 
   /**
-  * Allow to remove all plugged values from an endpoint.
+  * Return the value of an endpoint.
   *
-  * @param {String} endpoint - Where we have to filter values.
-  */
-  'clear': React.PropTypes.func.isRequired,
-
-  /**
-  * @param {String} endpoint - Endpoint to fetch.
+  * ````es6
+  * pluginStore.get('path.to.the.endpoint')
+  * pluginStore.get(['path', 'to', 'the', 'endpoint'])
+  * ````
   *
-  * @return {Array<any>} Values pluged into the endpoint.
+  * @param {String|Array<String>} endpoint - Endpoint to fetch.
+  *
+  * @return {any} Values pluged into the endpoint or null if the value do not exists.
   */
   'get': React.PropTypes.func.isRequired,
 
   /**
-  * @return {Array<String>} A list of endpoints that have registered values.
+  * Replace or set the value of an endpoint.
+  *
+  * ````es6
+  * pluginStore.set('path.to.the.endpoint', 5)
+  * pluginStore.set(['path', 'to', 'the', 'endpoint'], "something")
+  * ````
+  *
+  * @param {String} endpoint - Where we have to set values.
+  * @param {any} [value = undefined] - Value to set. A null-like value will delete the node if necessary.
+  *
+  * @return {PluginStoreType} An updated copy of this store.
   */
-  'getEndpoints': React.PropTypes.func.isRequired,
+  'set': React.PropTypes.func.isRequired,
 
   /**
-  * @param {String} endpoint - Endpoint to fetch.
+  * @param {String|Array<String>} [endpoint = undefined] - Parent endpoint, if this attribute is null, this method will use the root endpoint.
+  *
+  * @return {Array<String>} A list of sub-endpoint that have registered values.
+  */
+  'endpoints': React.PropTypes.func.isRequired,
+
+  /**
+  * @param {String|Array<String>} endpoint - Endpoint to fetch.
   *
   * @return {Boolean} True if the endpoint has registered values.
   */
-  'hasEndpoint': React.PropTypes.func.isRequired,
-
-  /**
-  * Same methods than before, but ignore namespaces.
-  */
-  'absolute': React.PropTypes.shape({
-    'plugin': React.PropTypes.func.isRequired,
-    'plugout': React.PropTypes.func.isRequired,
-    'filter': React.PropTypes.func.isRequired,
-    'clear': React.PropTypes.func.isRequired,
-    'get': React.PropTypes.func.isRequired,
-    'endpoints': React.PropTypes.func.isRequired,
-    'hasEndpoint': React.PropTypes.func.isRequired
-  }).isRequired
+  'has': React.PropTypes.func.isRequired
 })

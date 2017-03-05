@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Endpoint } from './Endpoint'
+import { Endpoint } from '../decorators/Endpoint'
 import { InjectIn } from './InjectIn'
 import { InjectSlot } from './InjectSlot'
 

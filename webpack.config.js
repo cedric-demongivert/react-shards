@@ -1,5 +1,4 @@
 module.exports = {
-  'devtool': 'inline-source-map',
   'output': {
     'library': 'Kernel',
     'libraryTarget': 'umd'
@@ -14,7 +13,10 @@ module.exports = {
     ]
   },
   'resolve': {
-    'extensions': ['.js', '.jsx']
+    'extensions': ['.js', '.jsx'],
+    'alias': {
+      'library': '../src/index.js'
+    }
   },
   'externals': {
     'jsdom': 'window',

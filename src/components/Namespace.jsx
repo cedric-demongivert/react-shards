@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Namespaced } from './Namespaced'
+import { Namespaced } from '../decorators/Namespaced'
 
 @Namespaced
 export class Namespace extends Component {

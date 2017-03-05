@@ -1,5 +1,6 @@
 // Karma configuration
 // Generated on Thu Feb 23 2017 18:23:10 GMT+0100 (Paris, Madrid)
+var assign = require('lodash/assign')
 
 module.exports = function (config) {
   config.set({
@@ -13,7 +14,7 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/**/*.jsx'
+      'test.bundle.js'
     ],
 
     // list of files to exclude
@@ -23,10 +24,12 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      './test/**/*.jsx': ['webpack', 'sourcemap']
+      'test.bundle.js': ['webpack', 'sourcemap']
     },
 
-    webpack: require('./webpack.config.js'),
+    webpack: assign(require('./webpack.config.js'), {
+      'devtool': 'inline-source-map'
+    }),
 
     webpackMiddleware: {
       // webpack-dev-middleware configuration
@@ -41,7 +44,7 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['nyan'],
 
     // web server port
     port: 9876,
