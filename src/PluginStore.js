@@ -121,11 +121,15 @@ export class PluginStore {
   _setNode (path = [], newNode) {
     path = this._sanitizePath(path)
 
+    if (path.length == 0 || path.length == 1 && path[0] == '') {
+      return new PluginStore(newNode)
+    }
+
     let result = newNode
     let parentPath = path.concat([])
     parentPath.pop()
 
-    this._reverse(parentPath, (oldNode, index) => {
+    this._reverse(parentPath, (oldNode, pathName, index) => {
       oldNode = oldNode || EMPTY_NODE
       result = (oldNode).set(
         'children', (oldNode).get('children').set(path[index + 1], result)
@@ -145,19 +149,26 @@ export class PluginStore {
   * @return {PluginStore} A new updated instance of this store.
   */
   _deleteNode (path = []) {
+    path = this._sanitizePath(path)
+
     let newNodePath = path.concat([])
-    let newNode = this._reverse(path, (element, index) => {
+    let newNode = this._reverse(path, (element, pathName, index) => {
       if (index === path.length - 1) {
-        if (element.get('children').size() > 0) {
+        if (element.get('children').size > 0) {
           return element.set('value', null)
         }
       } else {
-        if (element.get('children') > 1 || element.get('value') != null) {
+        if (
+          element.get('children').size > 1
+          || element.get('value') != null
+          || index < 0
+        ) {
           return element.set(
             'children', element.get('children').delete(path[index + 1])
           )
         }
       }
+
       newNodePath.pop()
     })
 
@@ -180,7 +191,7 @@ export class PluginStore {
     let oldValue = oldNode.get('value') || new List()
 
     if (!List.isList(oldValue)) {
-      oldValue = new List((oldValue.toJS) ? oldValue.toJS() : oldValue)
+      oldValue = new List([(oldValue.toJS) ? oldValue.toJS() : oldValue])
     }
 
     return this._setNode(path, oldNode.set('value', oldValue.push(...values)))
