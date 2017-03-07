@@ -90,5 +90,12 @@ export const PluginStoreType = React.PropTypes.shape({
   *
   * @return {Boolean} True if the endpoint has registered values.
   */
-  'has': React.PropTypes.func.isRequired
+  'has': React.PropTypes.func.isRequired,
+
+  /**
+  * Clear the store of its data.
+  *
+  * @return {PluginStoreType} An updated copy of this store.
+  */
+  'clear': React.PropTypes.func.isRequired
 })

@@ -2,7 +2,7 @@ import React from 'react'
 import { assign } from 'lodash'
 
 import { Namespaced } from './Namespaced'
-import { Kernel } from '../components/Kernel'
+import { PluginStoreType } from '../components/Kernel'
 
 export const Endpoint = (BaseClass) => {
   let result = class extends Namespaced(BaseClass) {

@@ -208,6 +208,9 @@ export class PluginStore {
         return this._deleteNode(path)
       }
     }
+    else {
+      return this
+    }
   }
 
   _deleteValues (path, values) {
@@ -310,15 +313,13 @@ export class PluginStore {
   * @see PluginStoreType.endpoints
   */
   endpoints (endpoint = []) {
-    if (isString(endpoint)) {
-      endpoint = endpoint.split('.')
-    }
+    endpoint = this._sanitizePath(endpoint)
 
     let stack = [this._toEndpointsState(this._getNode(endpoint))]
     let result = []
     if (stack[0].node.get('value') != null) result.push(null)
 
-    while (stack.lengh > 0) {
+    while (stack.length > 0) {
       let current = stack[stack.length - 1]
       let nextElement = current.iterator.next()
       if (nextElement.done) {
@@ -350,7 +351,7 @@ export class PluginStore {
     return {
       'node': node,
       'iterator': node.get('children').keys(),
-      'name': null
+      'name': name
     }
   }
 
@@ -365,5 +366,12 @@ export class PluginStore {
     } else {
       return true
     }
+  }
+
+  /**
+  * @see PluginStoreType.clear
+  */
+  clear (endpoint = []) {
+    return new PluginStore()
   }
 }
