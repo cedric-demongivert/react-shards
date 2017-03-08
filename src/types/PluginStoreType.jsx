@@ -15,7 +15,7 @@ export const PluginStoreType = React.PropTypes.shape({
   * @param {String|Array<String>} endpoint - Where we have to push values.
   * @param {any} ...values - Values to push into the endpoint.
   *
-  * @return {PluginStoreType} This store.
+  * @return {PluginStoreType} An updated copy of this store.
   */
   'push': React.PropTypes.func.isRequired,
 
@@ -30,7 +30,7 @@ export const PluginStoreType = React.PropTypes.shape({
   * @param {String|Array<String>} endpoint - Where we have to remove values.
   * @param {any} [...values = undefined] - Values to remove, if no value are passed, this method will remove all values attached to the endpoint.
   *
-  * @return {PluginStoreType} This store.
+  * @return {PluginStoreType} An updated copy of this store.
   */
   'delete': React.PropTypes.func.isRequired,
 
@@ -45,7 +45,7 @@ export const PluginStoreType = React.PropTypes.shape({
   * @param {String|Array<String>} endpoint - Where we have to filter values.
   * @param {Function} predicate - Predicate to fullfill.
   *
-  * @return {PluginStoreType} This store.
+  * @return {PluginStoreType} An updated copy of this store.
   */
   'filter': React.PropTypes.func.isRequired,
 
@@ -74,7 +74,7 @@ export const PluginStoreType = React.PropTypes.shape({
   * @param {String} endpoint - Where we have to set values.
   * @param {any} [value = undefined] - Value to set. A null-like value will delete the node if necessary.
   *
-  * @return {PluginStoreType} This store.
+  * @return {PluginStoreType} An updated copy of this store.
   */
   'set': React.PropTypes.func.isRequired,
 
@@ -114,14 +114,14 @@ export const PluginStoreType = React.PropTypes.shape({
   *
   * @param {String|Array<String>} [endpoint=undefined] - Endpoint to clear, if empty, this method will clear the entire store.
   *
-  * @return {PluginStoreType} This store.
+  * @return {PluginStoreType} An updated copy of this store.
   */
   'clear': React.PropTypes.func.isRequired,
 
   /**
   * Ignore eventual sub-store.
   *
-  * @return {PluginStoreType} A store with absolute scope.
+  * @return {PluginStoreType} An updated copy of this store.
   */
   'absolute': React.PropTypes.func.isRequired
 })
