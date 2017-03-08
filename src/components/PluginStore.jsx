@@ -4,6 +4,9 @@ import { pluginStores } from '../pluginStores'
 import { PluginStoreType } from '../types/PluginStoreType'
 
 export class PluginStore extends Component {
+  /**
+  * @see https://facebook.github.io/react/docs/react-component.html#constructor
+  */
   constructor (props) {
     super(props)
 
@@ -14,20 +17,35 @@ export class PluginStore extends Component {
     this.onStoreChange = this.onStoreChange.bind(this)
   }
 
+  /**
+  * @see https://facebook.github.io/react/docs/context.html
+  */
   getChildContext () {
     return {
       'pluginStore': this
     }
   }
 
+  /**
+  * @see https://facebook.github.io/react/docs/react-component.html#componentDidMount
+  */
   componentDidMount () {
-    this.from.registerOnChange(this.onStoreChange)
+    this.props.from.registerOnChange(this.props.name, this.onStoreChange)
   }
 
+  /**
+  * @see https://facebook.github.io/react/docs/react-component.html#componentWillUnmount
+  */
   componentWillUnmount () {
-    this.from.unregisterOnChange(this.onStoreChange)
+    this.props.from.unregisterOnChange(this.props.name, this.onStoreChange)
   }
 
+  /**
+  * When the store used by this component change.
+  *
+  * @param {PluginStoreType} oldStore - Old version of the store.
+  * @param {PluginStoreType} newStore - Updated version of the store.
+  */
   onStoreChange (oldStore, newStore) {
     this.setState({
       'store': newStore
@@ -95,20 +113,32 @@ export class PluginStore extends Component {
     return this
   }
 
+  /**
+  * @see https://facebook.github.io/react/docs/react-component.html#render
+  */
   render () {
     return this.props.children
   }
 }
 
+/**
+* @see https://facebook.github.io/react/docs/context.html
+*/
 PluginStore.childContextTypes = {
   'pluginStore': PluginStoreType.isRequired
 }
 
+/**
+* @see https://facebook.github.io/react/docs/typechecking-with-proptypes.html
+*/
 PluginStore.defaultProps = {
   'children': null,
   'from': pluginStores
 }
 
+/**
+* @see https://facebook.github.io/react/docs/typechecking-with-proptypes.html
+*/
 PluginStore.propTypes = {
   'children': React.PropTypes.node,
   'from': React.PropTypes.any.isRequired,

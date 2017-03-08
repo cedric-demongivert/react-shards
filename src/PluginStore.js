@@ -1,5 +1,5 @@
 import { Map, Record, List, fromJS } from 'immutable'
-import { isString } from 'lodash'
+import Endpoints from './Endpoints'
 
 const PluginStoreNode = new Record({
   'value': null,
@@ -9,23 +9,8 @@ const PluginStoreNode = new Record({
 const EMPTY_NODE = new PluginStoreNode()
 
 export class PluginStore {
-  constructor (state = new PluginStoreNode()) {
+  constructor (state = EMPTY_NODE) {
     this.state = state
-  }
-
-  /**
-  * Sanitize a path attribute.
-  *
-  * @param {Array<String>|String} path - Path to sanitize.
-  *
-  * @return {Array<String>} Sanitized path.
-  */
-  _sanitizePath (path = []) {
-    if (isString(path)) {
-      path = path.split('.')
-    }
-
-    return path
   }
 
   /**
@@ -38,7 +23,7 @@ export class PluginStore {
   * @return {any} Nothing, or step function value if the step function return something.
   */
   _iterate (path = [], step, defaultValue) {
-    path = this._sanitizePath(path)
+    path = Endpoints.identifierToArray(path)
 
     let node = this.state
 
@@ -119,7 +104,7 @@ export class PluginStore {
   * @return {PluginStore} A new updated instance of this store.
   */
   _setNode (path = [], newNode) {
-    path = this._sanitizePath(path)
+    path = Endpoints.identifierToArray(path)
 
     if (path.length == 0 || path.length == 1 && path[0] == '') {
       return new PluginStore(newNode)
@@ -149,7 +134,7 @@ export class PluginStore {
   * @return {PluginStore} A new updated instance of this store.
   */
   _deleteNode (path = []) {
-    path = this._sanitizePath(path)
+    path = Endpoints.identifierToArray(path)
 
     let newNodePath = path.concat([])
     let newNode = this._reverse(path, (element, pathName, index) => {
@@ -178,34 +163,36 @@ export class PluginStore {
   /**
   * @see PluginStoreType.get
   */
-  get (path = []) {
-    let result = this._getNode(path, EMPTY_NODE).get('value')
+  get (endpoint = []) {
+    let result = this._getNode(endpoint, EMPTY_NODE).get('value')
     return (result != null && result.toJS) ? result.toJS() : result
   }
 
   /**
   * @see PluginStoreType.push
   */
-  push (path = [], ...values) {
-    let oldNode = this._getNode(path, EMPTY_NODE)
+  push (endpoint = [], ...values) {
+    let oldNode = this._getNode(endpoint, EMPTY_NODE)
     let oldValue = oldNode.get('value') || new List()
 
     if (!List.isList(oldValue)) {
       oldValue = new List([(oldValue.toJS) ? oldValue.toJS() : oldValue])
     }
 
-    return this._setNode(path, oldNode.set('value', oldValue.push(...values)))
+    return this._setNode(
+      endpoint, oldNode.set('value', oldValue.push(...values))
+    )
   }
 
   /**
   * @see PluginStoreType.delete
   */
-  delete (path = [], ...values) {
-    if (this._hasNode(path)) {
+  delete (endpoint = [], ...values) {
+    if (this._hasNode(endpoint)) {
       if (values.length > 0) {
-        return this._deleteValues(path, values)
+        return this._deleteValues(endpoint, values)
       } else {
-        return this._deleteNode(path)
+        return this._deleteNode(endpoint)
       }
     }
     else {
@@ -213,25 +200,25 @@ export class PluginStore {
     }
   }
 
-  _deleteValues (path, values) {
-    let oldNode = this._getNode(path)
+  _deleteValues (endpoint, values) {
+    let oldNode = this._getNode(endpoint)
     let oldValue = oldNode.get('value')
     let newValue = null
 
     if (List.isList(oldValue)) {
-      newValue = this._deleteFromList(path, oldValue, values)
+      newValue = this._deleteFromList(oldValue, values)
     } else {
-      newValue = this._deleteValue(path, oldValue, values)
+      newValue = this._deleteValue(oldValue, values)
     }
 
     if (newValue == null) {
-      return this._deleteNode(path)
+      return this._deleteNode(endpoint)
     } else {
-      return this._setNode(path, oldNode.set('value', newValue))
+      return this._setNode(endpoint, oldNode.set('value', newValue))
     }
   }
 
-  _deleteFromList (path, oldValue, values) {
+  _deleteFromList (oldValue, values) {
     let result = oldValue
 
     for (let value of values) {
@@ -248,7 +235,7 @@ export class PluginStore {
     return result
   }
 
-  _deleteValue (path, oldValue, values) {
+  _deleteValue (oldValue, values) {
     let tmp = (oldValue != null && oldValue.toJS) ? oldValue.toJS() : oldValue
     if (values.indexOf(tmp) >= 0) {
       return null
@@ -260,37 +247,37 @@ export class PluginStore {
   /**
   * @see PluginStoreType.set
   */
-  set (path = [], value) {
+  set (endpoint = [], value) {
     if (value == null) {
-      return this._deleteNode(path)
+      return this._deleteNode(endpoint)
     } else {
-      let oldNode = this._getNode(path, EMPTY_NODE)
-      return this._setNode(path, oldNode.set('value', fromJS(value)))
+      let oldNode = this._getNode(endpoint, EMPTY_NODE)
+      return this._setNode(endpoint, oldNode.set('value', fromJS(value)))
     }
   }
 
   /**
   * @see PluginStoreType.filter
   */
-  filter (path = [], predicate) {
-    let oldNode = this._getNode(path)
+  filter (endpoint = [], predicate) {
+    let oldNode = this._getNode(endpoint)
     let oldValue = oldNode.get('value')
     let newValue = null
 
     if (List.isList(oldValue)) {
-      newValue = this._filterList(path, oldValue, predicate)
+      newValue = this._filterList(oldValue, predicate)
     } else {
-      newValue = this._filterValue(path, oldValue, predicate)
+      newValue = this._filterValue(oldValue, predicate)
     }
 
     if (newValue == null) {
-      return this._deleteNode(path)
+      return this._deleteNode(endpoint)
     } else {
-      return this._setNode(path, oldNode.set('value', newValue))
+      return this._setNode(endpoint, oldNode.set('value', newValue))
     }
   }
 
-  _filterList (path, oldValue, predicate) {
+  _filterList (oldValue, predicate) {
     let result = oldValue.filter(predicate)
 
     if (result.size <= 0) {
@@ -300,7 +287,7 @@ export class PluginStore {
     }
   }
 
-  _filterValue (path, oldValue, predicate) {
+  _filterValue (oldValue, predicate) {
     let tmp = (oldValue != null && oldValue.toJS) ? oldValue.toJS() : oldValue
     if (predicate(tmp)) {
       return null
@@ -313,7 +300,7 @@ export class PluginStore {
   * @see PluginStoreType.endpoints
   */
   endpoints (endpoint = []) {
-    endpoint = this._sanitizePath(endpoint)
+    endpoint = Endpoints.identifierToArray(endpoint)
 
     let stack = [this._toEndpointsState(this._getNode(endpoint))]
     let result = []
@@ -372,6 +359,13 @@ export class PluginStore {
   * @see PluginStoreType.clear
   */
   clear (endpoint = []) {
-    return new PluginStore()
+    return this._setNode(endpoint, EMPTY_NODE)
+  }
+
+  /**
+  * @see PluginStoreType.absolute
+  */
+  absolute () {
+    return this
   }
 }

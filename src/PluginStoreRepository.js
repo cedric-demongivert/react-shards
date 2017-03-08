@@ -1,13 +1,14 @@
 import { PluginStore } from './PluginStore'
 
-export class PluginStoreManager
+export class PluginStoreRepository
 {
   constructor () {
     this._listeners = {}
+    this._emuled = {}
     this._proxy = {}
   }
 
-  get (name, factory = () => new PluginStore()) {
+  get (name) {
     if (name in this._proxy) {
       return this._proxy[name]
     } else {
@@ -17,7 +18,23 @@ export class PluginStoreManager
     }
   }
 
-  clear (name) {
+  set (name, store) {
+
+  }
+
+  create (name) {
+
+  }
+
+  emulate (name, path, subname) {
+
+  }
+
+  has (name) {
+
+  }
+
+  delete (name) {
 
   }
 
@@ -47,7 +64,6 @@ export class PluginStoreManager
     }
   }
 }
-
 
 class PluginStoreProxy
 {
