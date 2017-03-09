@@ -6,6 +6,18 @@ const STATUS_UNRESOLVED = 0
 const STATUS_RESOLVING = 1
 const STATUS_RESOLVED = 2
 
+const DEFAULT_COMPOSE_MAPPER = (Element, props, children) => {
+  if (React.isValidElement(Element)) {
+    return React.cloneElement(Element, props, children)
+  } else if (typeof(Element) == 'function') {
+    try {
+      return Element(props, children)
+    } catch (e) {
+      return (<Element {...props}>{children}</Element>)
+    }
+  }
+}
+
 /**
 * Compose a bunch of component in regard of their contexts.
 *
@@ -24,7 +36,7 @@ export class Compose extends Component {
   */
   resolve () {
     let result = []
-    let pluggedComponents = this.getPlugged()
+    let pluggedComponents = this.get()
     let status = this.getBaseStatus(pluggedComponents)
     let services = this.getContextMap(pluggedComponents)
 
@@ -81,6 +93,11 @@ export class Compose extends Component {
     return result
   }
 
+  getComponentType (component) {
+    let component = this.props.mapper(component, {}, null)
+    return component.type
+  }
+
   getBaseStatus (components) {
     let result = []
 
@@ -127,7 +144,7 @@ export class Compose extends Component {
     let result = this.props.children
 
     for (let index = 1; index <= components.length; ++index) {
-      result = this.toComponent(
+      result = this.props.mapper(
         components[components.length - index], {}, result
       )
     }
@@ -138,9 +155,11 @@ export class Compose extends Component {
 }
 
 Compose.defaultProps = {
-  'children': null
+  'children': null,
+  'mapper': DEFAULT_COMPOSE_MAPPER
 }
 
 Compose.propTypes = {
-  'children': React.PropTypes.element
+  'children': React.PropTypes.element,
+  'mapper': React.PropTypes.func.isRequired
 }

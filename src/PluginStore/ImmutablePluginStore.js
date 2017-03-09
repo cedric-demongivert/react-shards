@@ -1,16 +1,45 @@
 import { Map, Record, List, fromJS } from 'immutable'
 import Endpoints from './Endpoints'
 
-const PluginStoreNode = new Record({
+/**
+* @class ImmutablePluginStoreNode
+* @see https://facebook.github.io/immutable-js/docs/#/Record
+*/
+const ImmutablePluginStoreNode = new Record({
   'value': null,
   'children': new Map()
 })
 
-const EMPTY_NODE = new PluginStoreNode()
+const EMPTY_NODE = new ImmutablePluginStoreNode()
 
-export class PluginStore {
+/**
+* @class ImmutablePluginStore
+*
+* A simple, Immutable implementation of PluginStoreType.
+*/
+export class ImmutablePluginStore {
+  /**
+  * Create a new empty store.
+  *
+  * @param {PluginStoreType} [toCopy=null] - Store to copy.
+  */
   constructor (state = EMPTY_NODE) {
-    this.state = state
+    if (state instanceof ImmutablePluginStoreNode) {
+      this.state = state
+    } else {
+      this.state = EMPTY_NODE
+
+      if (state) {
+        let endpoints = state.endpoints()
+        let store = new ImmutablePluginStore()
+
+        for (let endpoint of endpoints) {
+          store = store.set(endpoint, state.get(endpoint))
+        }
+
+        this.state = store.state
+      }
+    }
   }
 
   /**
@@ -89,7 +118,7 @@ export class PluginStore {
   * @param {Array|String} path - Path to the node to get.
   * @param {any} [defaultValue = null] - Value to return if the node doesn't exist.
   *
-  * @return {PluginStoreNode} The node for the path.
+  * @return {ImmutablePluginStoreNode} The node for the path.
   */
   _getNode (path = [], defaultValue = null) {
     return this._iterate(path) || defaultValue
@@ -99,7 +128,7 @@ export class PluginStore {
   * Set a node of this store.
   *
   * @param {Array|String} path - Path to the node to set.
-  * @param {PluginStoreNode} newNode - New value of the node at the end of the path.
+  * @param {ImmutablePluginStoreNode} newNode - New value of the node at the end of the path.
   *
   * @return {PluginStore} A new updated instance of this store.
   */
@@ -107,7 +136,7 @@ export class PluginStore {
     path = Endpoints.identifierToArray(path)
 
     if (path.length == 0 || path.length == 1 && path[0] == '') {
-      return new PluginStore(newNode)
+      return new ImmutablePluginStore(newNode)
     }
 
     let result = newNode
@@ -121,7 +150,7 @@ export class PluginStore {
       )
     })
 
-    return new PluginStore(result)
+    return new ImmutablePluginStore(result)
   }
 
   /**
@@ -200,6 +229,14 @@ export class PluginStore {
     }
   }
 
+  /**
+  * Apply delete action on an endpoint.
+  *
+  * @param {Array<String>} endpoint - Endpoint to update.
+  * @param {Array<any>} values - Values to delete.
+  *
+  * @return {PluginStore} An updated instance of this store.
+  */
   _deleteValues (endpoint, values) {
     let oldNode = this._getNode(endpoint)
     let oldValue = oldNode.get('value')
@@ -218,6 +255,14 @@ export class PluginStore {
     }
   }
 
+  /**
+  * Delete values from a list.
+  *
+  * @param {List<any>} oldValue - List to update.
+  * @param {Array<any>} values - Values to remove.
+  *
+  * @return {List<any>} An updated list, or null if the result is empty.
+  */
   _deleteFromList (oldValue, values) {
     let result = oldValue
 
@@ -235,6 +280,14 @@ export class PluginStore {
     return result
   }
 
+  /**
+  * Delete values for endpoints that store a unique value.
+  *
+  * @param {any} oldValue - Value to check.
+  * @param {Array<any>} values - Values to delete.
+  *
+  * @return {any} oldValue or null
+  */
   _deleteValue (oldValue, values) {
     let tmp = (oldValue != null && oldValue.toJS) ? oldValue.toJS() : oldValue
     if (values.indexOf(tmp) >= 0) {
@@ -277,6 +330,14 @@ export class PluginStore {
     }
   }
 
+  /**
+  * Apply filtering to a list.
+  *
+  * @param {List<any>} oldValue - List to filter.
+  * @param {Function} predicate - Filter.
+  *
+  * @return {List<any>} A filtered list, or null if the result is empty.
+  */
   _filterList (oldValue, predicate) {
     let result = oldValue.filter(predicate)
 
@@ -287,6 +348,14 @@ export class PluginStore {
     }
   }
 
+  /**
+  * Apply filtering to an endpoint that store a unique value.
+  *
+  * @param {any} oldValue - Value to filter.
+  * @param {Function} predicate - Filter.
+  *
+  * @return {any} oldValue or null.
+  */
   _filterValue (oldValue, predicate) {
     let tmp = (oldValue != null && oldValue.toJS) ? oldValue.toJS() : oldValue
     if (predicate(tmp)) {
@@ -300,30 +369,42 @@ export class PluginStore {
   * @see PluginStoreType.endpoints
   */
   endpoints (endpoint = []) {
-    endpoint = Endpoints.identifierToArray(endpoint)
+    let rootNode = this._getNode(Endpoints.identifierToArray(endpoint))
 
-    let stack = [this._toEndpointsState(this._getNode(endpoint))]
-    let result = []
-    if (stack[0].node.get('value') != null) result.push(null)
+    if (rootNode) {
+      let stack = [this._toEndpointsState(rootNode)]
+      let result = []
+      if (stack[0].node.get('value') != null) result.push(null)
 
-    while (stack.length > 0) {
-      let current = stack[stack.length - 1]
-      let nextElement = current.iterator.next()
-      if (nextElement.done) {
-        stack.pop()
-      } else {
-        let nextNode = current.node.get('children').get(nextElement.value)
-        stack.push(this._toEndpointsState(nextNode, nextElement.value))
+      while (stack.length > 0) {
+        let current = stack[stack.length - 1]
+        let nextElement = current.iterator.next()
+        if (nextElement.done) {
+          stack.pop()
+        } else {
+          let nextNode = current.node.get('children').get(nextElement.value)
+          stack.push(this._toEndpointsState(nextNode, nextElement.value))
 
-        if (nextNode.get('value') != null) {
-          result.push(this._endpointsStackToPath(stack))
+          if (nextNode.get('value') != null) {
+            result.push(this._endpointsStackToPath(stack))
+          }
         }
       }
-    }
 
-    return result
+      return result
+    }
+    else {
+      return []
+    }
   }
 
+  /**
+  * Transform a state stack into an endpoint path.
+  *
+  * @param {Array<any>} stack - endpoints method stack
+  *
+  * @return {String} An endpoint Path.
+  */
   _endpointsStackToPath (stack) {
     let result = []
 
@@ -334,6 +415,14 @@ export class PluginStore {
     return result.join('.')
   }
 
+  /**
+  * Transform a ImmutablePluginStoreNode into a endpoint stack state.
+  *
+  * @param {ImmutablePluginStoreNode} node - Node to transform.
+  * @param {String} [name = null] - Name of the node.
+  *
+  * @return An algorithm state.
+  */
   _toEndpointsState (node, name = null) {
     return {
       'node': node,
@@ -367,5 +456,35 @@ export class PluginStore {
   */
   absolute () {
     return this
+  }
+
+  /**
+  * @see PluginStoreType.onChange
+  */
+  onChange (endpoint, callback) {
+    throw new Error([
+      'Unnable to register a listener for the onChange event : this store is',
+      'immutable, or derived from an immutable store.'
+    ].joint(' '))
+  }
+
+  /**
+  * @see PluginStoreType.snapshot
+  */
+  snapshot (endpoint = []) {
+    endpoint = Endpoints.identifierToArray(endpoint)
+
+    if (endpoint.lenght == 0) {
+      return this
+    } else {
+      return new ImmutablePluginStore(this._getNode(endpoint))
+    }
+  }
+
+  /**
+  * @see PluginStoreType.isImmutable
+  */
+  isImmutable () {
+    return true
   }
 }

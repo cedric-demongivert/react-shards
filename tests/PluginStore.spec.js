@@ -1,6 +1,8 @@
 /* eslint-env mocha */
 
 import { PluginStore } from 'library'
-import { StandardPluginStore } from './src/StandardPluginStore.spec'
+import { isPluginStoreType } from './src/PluginStoreType/spec'
 
-StandardPluginStore('PluginStore', () => new PluginStore())
+describe('PluginStore', function () {
+  isPluginStoreType(() => new PluginStore())
+})

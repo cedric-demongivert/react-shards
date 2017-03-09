@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { pluginStores } from '../pluginStores'
+import { shards } from '../shards'
 import { PluginStoreType } from '../types/PluginStoreType'
 
 export class PluginStore extends Component {
@@ -133,7 +133,7 @@ PluginStore.childContextTypes = {
 */
 PluginStore.defaultProps = {
   'children': null,
-  'from': pluginStores
+  'from': shards
 }
 
 /**
