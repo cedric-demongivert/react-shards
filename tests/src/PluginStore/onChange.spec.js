@@ -2,7 +2,7 @@
 
 import { expect, spy } from 'chai'
 
-export function isPluginStoreTypeOnChange (createStore) {
+export function isPluginStoreOnChange (createStore) {
   it('throw an error if it is call on an immutable store', function () {
     let store = createStore()
 
@@ -27,7 +27,7 @@ export function isPluginStoreTypeOnChange (createStore) {
       store.set('endpoints.first', 'coconut')
 
       expect(listener).to.have.been.called.once
-      expect(listener).to.have.been.called.with(['endpoints', 'first'], store)
+      expect(listener).to.have.been.called.with(['endpoints', 'first'])
       expect(listenerResult).to.be.equal('coconut')
     }
   })
@@ -47,7 +47,7 @@ export function isPluginStoreTypeOnChange (createStore) {
       store.delete('endpoints.first', 2, 4)
 
       expect(listener).to.have.been.called.once
-      expect(listener).to.have.been.called.with(['endpoints', 'first'], store)
+      expect(listener).to.have.been.called.with(['endpoints', 'first'])
       expect(listenerResult).to.be.eql([1, 2, 3])
     }
   })
@@ -67,7 +67,7 @@ export function isPluginStoreTypeOnChange (createStore) {
       store.clear('endpoints.first')
 
       expect(listener).to.have.been.called.once
-      expect(listener).to.have.been.called.with(['endpoints', 'first'], store)
+      expect(listener).to.have.been.called.with(['endpoints', 'first'])
       expect(listenerResult).to.be.false
     }
   })
@@ -87,7 +87,7 @@ export function isPluginStoreTypeOnChange (createStore) {
       store.filter('endpoints.first', (x) => x <= 2)
 
       expect(listener).to.have.been.called.once
-      expect(listener).to.have.been.called.with(['endpoints', 'first'], store)
+      expect(listener).to.have.been.called.with(['endpoints', 'first'])
       expect(listenerResult).to.be.eql([1, 2, 2])
     }
   })
@@ -107,13 +107,13 @@ export function isPluginStoreTypeOnChange (createStore) {
       store.push('endpoints.first', 1)
 
       expect(listener).to.have.been.called.once
-      expect(listener).to.have.been.called.with(['endpoints', 'first'], store)
+      expect(listener).to.have.been.called.with(['endpoints', 'first'])
       expect(listenerResult).to.be.eql([1, 2, 1])
 
       store.push('endpoints.first', 3, 4, 4)
 
       expect(listener).to.have.been.called.twice
-      expect(listener).to.have.been.called.with(['endpoints', 'first'], store)
+      expect(listener).to.have.been.called.with(['endpoints', 'first'])
       expect(listenerResult).to.be.eql([1, 2, 1, 3, 4, 4])
     }
   })

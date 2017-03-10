@@ -1,33 +1,33 @@
-import { ImmutablePluginStore } from './ImmutablePluginStore'
-import { SubPluginStore } from './SubPluginStore'
+import { ImmutableStore } from './ImmutableStore'
+import { SubStore } from './SubStore'
 import Endpoints from './Endpoints'
 
 /**
-* @class PluginStore
+* @class MutableStore
 *
-* A simple mutable PluginStoreType implementation.
+* A simple mutable PluginStore.type implementation.
 */
-export class PluginStore {
+export class MutableStore {
   /**
   * Create a new empty store.
   *
-  * @param {PluginStoreType} [toCopy=null] - Store to copy.
+  * @param {PluginStore.type} [toCopy=null] - Store to copy.
   */
   constructor () {
-    this.state = new ImmutablePluginStore()
+    this.state = new ImmutableStore()
     this.listeners = {}
     this.rootListeners = []
   }
 
   /**
-  * @see PluginStoreType.get
+  * @see PluginStore.type.get
   */
   get (...params) {
     return this.state.get(...params)
   }
 
   /**
-  * @see PluginStoreType.push
+  * @see PluginStore.type.push
   */
   push (...params) {
     this.state = this.state.push(...params)
@@ -36,7 +36,7 @@ export class PluginStore {
   }
 
   /**
-  * @see PluginStoreType.delete
+  * @see PluginStore.type.delete
   */
   delete (...params) {
     this.state = this.state.delete(...params)
@@ -45,7 +45,7 @@ export class PluginStore {
   }
 
   /**
-  * @see PluginStoreType.set
+  * @see PluginStore.type.set
   */
   set (...params) {
     this.state = this.state.set(...params)
@@ -54,7 +54,7 @@ export class PluginStore {
   }
 
   /**
-  * @see PluginStoreType.filter
+  * @see PluginStore.type.filter
   */
   filter (...params) {
     this.state = this.state.filter(...params)
@@ -63,21 +63,21 @@ export class PluginStore {
   }
 
   /**
-  * @see PluginStoreType.endpoints
+  * @see PluginStore.type.endpoints
   */
   endpoints (...params) {
     return this.state.endpoints(...params)
   }
 
   /**
-  * @see PluginStoreType.has
+  * @see PluginStore.type.has
   */
   has (...params) {
     return this.state.has(...params)
   }
 
   /**
-  * @see PluginStoreType.clear
+  * @see PluginStore.type.clear
   */
   clear (...params) {
     this.state = this.state.clear(...params)
@@ -86,21 +86,21 @@ export class PluginStore {
   }
 
   /**
-  * @see PluginStoreType.absolute
+  * @see PluginStore.type.absolute
   */
   absolute () {
     return this
   }
 
   /**
-  * @see PluginStoreType.absolute
+  * @see PluginStore.type.absolute
   */
   snapshot (...params) {
     return this.state.snapshot(...params)
   }
 
   /**
-  * @see PluginStoreType.onChange
+  * @see PluginStore.type.onChange
   */
   onChange (endpoint, callback) {
     let identifier = Endpoints.identifierToString(endpoint)
@@ -143,7 +143,7 @@ export class PluginStore {
         subEndpoint.length < stringIdentifier.length &&
         stringIdentifier.indexOf(subEndpoint) == 0
       ) {
-        let substore = new SubPluginStore(this, subEndpoint)
+        let substore = new SubStore(this, subEndpoint)
         let subIdentifier = Endpoints.identifierToArray(
           stringIdentifier.substring(subEndpoint.length + 1)
         )
@@ -155,7 +155,7 @@ export class PluginStore {
   }
 
   /**
-  * @see PluginStoreType.isImmutable
+  * @see PluginStore.type.isImmutable
   */
   isImmutable () {
     return false

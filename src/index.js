@@ -1,6 +1,8 @@
-export { PluginStoreType } from './types/PluginStoreType'
-export { ImmutablePluginStore } from './PluginStore/ImmutablePluginStore'
-export { SubPluginStore } from './PluginStore/SubPluginStore'
-export { PluginStore } from './PluginStore/PluginStore'
-//
-// export default new PluginStore()
+export { PluginStore } from './PluginStore/index'
+export { defaultStore } from './defaultStore'
+export { Endpoint } from './decorators/Endpoint'
+export { Plugins } from './components/Plugins'
+
+import { defaultStore } from './defaultStore'
+
+export default defaultStore

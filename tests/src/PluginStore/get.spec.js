@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-export function isPluginStoreTypeGet (createStore) {
+export function isPluginStoreGet (createStore) {
   let store = createStore().set('endpoints.first', 'azerty')
                            .set('endpoints.second', {'some': 2})
                            .set('endpoints.third', [1, 2, 3])

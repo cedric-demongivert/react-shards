@@ -1,15 +1,15 @@
 import Endpoints from './Endpoints'
 
 /**
-* @class SubPluginStore
+* @class SubStore
 *
 * A PluginStore that is a subset of another PluginStore.
 */
-export class SubPluginStore {
+export class SubStore {
   /**
-  * Create a new SubPluginStore from another store.
+  * Create a new SubStore from another store.
   *
-  * @param {PluginStoreType} parentStore - Parent store.
+  * @param {PluginStore.type} parentStore - Parent store.
   * @param {String, Array<String>} rootEndpoint - Root endpoint of this store in the parent.
   */
   constructor (parentStore, rootEndpoint) {
@@ -30,7 +30,7 @@ export class SubPluginStore {
     endpoint = this.rootEndpoint.concat(Endpoints.identifierToArray(endpoint))
     if (this.parentStore.isImmutable()) {
       let newParentStore = this.parentStore[name](endpoint, ...params)
-      return new SubPluginStore(newParentStore, this.rootEndpoint)
+      return new SubStore(newParentStore, this.rootEndpoint)
     } else {
       this.parentStore[name](endpoint, ...params)
       return this
@@ -38,7 +38,7 @@ export class SubPluginStore {
   }
 
   /**
-  * @see PluginStoreType.get
+  * @see PluginStore.type.get
   */
   get (endpoint = []) {
     endpoint = this.rootEndpoint.concat(Endpoints.identifierToArray(endpoint))
@@ -46,35 +46,35 @@ export class SubPluginStore {
   }
 
   /**
-  * @see PluginStoreType.push
+  * @see PluginStore.type.push
   */
   push (endpoint = [], ...values) {
     return this._delegate('push', endpoint, ...values)
   }
 
   /**
-  * @see PluginStoreType.delete
+  * @see PluginStore.type.delete
   */
   delete (endpoint = [], ...values) {
     return this._delegate('delete', endpoint, ...values)
   }
 
   /**
-  * @see PluginStoreType.set
+  * @see PluginStore.type.set
   */
   set (endpoint = [], value) {
     return this._delegate('set', endpoint, value)
   }
 
   /**
-  * @see PluginStoreType.filter
+  * @see PluginStore.type.filter
   */
   filter (endpoint = [], predicate) {
     return this._delegate('filter', endpoint, predicate)
   }
 
   /**
-  * @see PluginStoreType.endpoints
+  * @see PluginStore.type.endpoints
   */
   endpoints (endpoint = []) {
     endpoint = this.rootEndpoint.concat(Endpoints.identifierToArray(endpoint))
@@ -82,7 +82,7 @@ export class SubPluginStore {
   }
 
   /**
-  * @see PluginStoreType.has
+  * @see PluginStore.type.has
   */
   has (endpoint = []) {
     endpoint = this.rootEndpoint.concat(Endpoints.identifierToArray(endpoint))
@@ -90,21 +90,21 @@ export class SubPluginStore {
   }
 
   /**
-  * @see PluginStoreType.clear
+  * @see PluginStore.type.clear
   */
   clear (endpoint = []) {
     return this._delegate('clear', endpoint)
   }
 
   /**
-  * @see PluginStoreType.absolute
+  * @see PluginStore.type.absolute
   */
   absolute () {
     return this.parentStore
   }
 
   /**
-  * @see PluginStoreType.snapshot
+  * @see PluginStore.type.snapshot
   */
   snapshot (endpoint) {
     endpoint = this.rootEndpoint.concat(Endpoints.identifierToArray(endpoint))
@@ -112,7 +112,7 @@ export class SubPluginStore {
   }
 
   /**
-  * @see PluginStoreType.onChange
+  * @see PluginStore.type.onChange
   */
   onChange (endpoint = [], callback) {
     endpoint = this.rootEndpoint.concat(Endpoints.identifierToArray(endpoint))
@@ -120,7 +120,7 @@ export class SubPluginStore {
   }
 
   /**
-  * @see PluginStoreType.isImmutable
+  * @see PluginStore.type.isImmutable
   */
   isImmutable () {
     return this.parentStore.isImmutable()

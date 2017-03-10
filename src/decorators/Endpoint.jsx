@@ -1,8 +1,7 @@
 import React from 'react'
 import { assign } from 'lodash'
 
-import { PluginStoreType } from '../components/Kernel'
-import { Endpoints } from '../Endpoints'
+import { PluginStore } from '../PluginStore/index'
 
 /**
 * @decorator
@@ -41,72 +40,93 @@ export const Endpoint = (BaseClass) => {
     */
     prefix (endpoint = []) {
       return this.prefix.concat(
-        Endpoints.identifierToArray(this.props.name),
-        Endpoints.identifierToArray(endpoint)
+        PluginStore.Endpoints.identifierToArray(this.props.name),
+        PluginStore.Endpoints.identifierToArray(endpoint)
       )
     }
 
     /**
-    * @see PluginStoreType.push
+    * @see PluginStore.type.push
     */
     push (endpoint = [], ...params) {
       return this.pluginStore.push(this.prefix(endpoint), ...params)
     }
 
     /**
-    * @see PluginStoreType.delete
+    * @see PluginStore.type.delete
     */
     delete (endpoint = [], ...params) {
       return this.pluginStore.delete(this.prefix(endpoint), ...params)
     }
 
     /**
-    * @see PluginStoreType.filter
+    * @see PluginStore.type.filter
     */
     filter (endpoint = [], ...params) {
       return this.pluginStore.filter(this.prefix(endpoint), ...params)
     }
 
     /**
-    * @see PluginStoreType.get
+    * @see PluginStore.type.get
     */
     get (endpoint = [], ...params) {
       return this.pluginStore.get(this.prefix(endpoint), ...params)
     }
 
     /**
-    * @see PluginStoreType.set
+    * @see PluginStore.type.set
     */
     set (endpoint = [], ...params) {
       return this.pluginStore.set(this.prefix(endpoint), ...params)
     }
 
     /**
-    * @see PluginStoreType.endpoints
+    * @see PluginStore.type.endpoints
     */
     endpoints (endpoint = [], ...params) {
       return this.pluginStore.endpoints(this.prefix(endpoint), ...params)
     }
 
     /**
-    * @see PluginStoreType.has
+    * @see PluginStore.type.has
     */
     has (endpoint = [], ...params) {
       return this.pluginStore.has(this.prefix(endpoint), ...params)
     }
 
     /**
-    * @see PluginStoreType.clear
+    * @see PluginStore.type.clear
     */
     clear (endpoint = [], ...params) {
       return this.pluginStore.clear(this.prefix(endpoint), ...params)
     }
 
     /**
-    * @see PluginStoreType.absolute
+    * @see PluginStore.type.absolute
     */
     absolute () {
       return this.pluginStore.absolute()
+    }
+
+    /**
+    * @see PluginStore.type.snapshot
+    */
+    snapshot (...params) {
+      return this.pluginStore.snapshot(...params)
+    }
+
+    /**
+    * @see PluginStore.type.onChange
+    */
+    onChange (...params) {
+      return this.pluginStore.onChange(...params)
+    }
+
+    /**
+    * @see PluginStore.type.isImmutable
+    */
+    isImmutable (...params) {
+      return this.pluginStore.isImmutable(...params)
     }
   }
 
@@ -114,14 +134,14 @@ export const Endpoint = (BaseClass) => {
   * @see https://facebook.github.io/react/docs/context.html
   */
   result.contextTypes = assign({}, BaseClass.contextTypes, {
-    'pluginStore': PluginStoreType.isRequired
+    'pluginStore': PluginStore.type.isRequired
   })
 
   /**
   * @see https://facebook.github.io/react/docs/context.html
   */
   result.childContextTypes = assign({}, BaseClass.childContextTypes, {
-    'pluginStore': PluginStoreType.isRequired
+    'pluginStore': PluginStore.type.isRequired
   })
 
   /**

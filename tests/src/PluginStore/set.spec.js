@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-export function isPluginStoreTypeSet (createStore) {
+export function isPluginStoreSet (createStore) {
   it(
     'allow to set a value for an endpoint and to retrieve it',
     function () {

@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-export function isPluginStoreTypeSnapshot (createStore) {
+export function isPluginStoreSnapshot (createStore) {
   let baseValues = {
     'endpoints': 'azerty',
     'endpoints.first': 2,

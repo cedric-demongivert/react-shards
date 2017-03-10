@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-export function isPluginStoreTypeDelete (createStore) {
+export function isPluginStoreDelete (createStore) {
   it('remove values from a list', function () {
     let store = () => createStore().push('endpoints', 1, 2, 3, 3, 4, 5, 6)
 

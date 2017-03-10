@@ -2,36 +2,36 @@ import { Map, Record, List, fromJS } from 'immutable'
 import Endpoints from './Endpoints'
 
 /**
-* @class ImmutablePluginStoreNode
+* @class ImmutableStoreNode
 * @see https://facebook.github.io/immutable-js/docs/#/Record
 */
-const ImmutablePluginStoreNode = new Record({
+const ImmutableStoreNode = new Record({
   'value': null,
   'children': new Map()
 })
 
-const EMPTY_NODE = new ImmutablePluginStoreNode()
+const EMPTY_NODE = new ImmutableStoreNode()
 
 /**
-* @class ImmutablePluginStore
+* @class ImmutableStore
 *
-* A simple, Immutable implementation of PluginStoreType.
+* A simple, Immutable implementation of PluginStore.type.
 */
-export class ImmutablePluginStore {
+export class ImmutableStore {
   /**
   * Create a new empty store.
   *
-  * @param {PluginStoreType} [toCopy=null] - Store to copy.
+  * @param {PluginStore.type} [toCopy=null] - Store to copy.
   */
   constructor (state = EMPTY_NODE) {
-    if (state instanceof ImmutablePluginStoreNode) {
+    if (state instanceof ImmutableStoreNode) {
       this.state = state
     } else {
       this.state = EMPTY_NODE
 
       if (state) {
         let endpoints = state.endpoints()
-        let store = new ImmutablePluginStore()
+        let store = new ImmutableStore()
 
         for (let endpoint of endpoints) {
           store = store.set(endpoint, state.get(endpoint))
@@ -118,7 +118,7 @@ export class ImmutablePluginStore {
   * @param {Array|String} path - Path to the node to get.
   * @param {any} [defaultValue = null] - Value to return if the node doesn't exist.
   *
-  * @return {ImmutablePluginStoreNode} The node for the path.
+  * @return {ImmutableStoreNode} The node for the path.
   */
   _getNode (path = [], defaultValue = null) {
     return this._iterate(path) || defaultValue
@@ -128,7 +128,7 @@ export class ImmutablePluginStore {
   * Set a node of this store.
   *
   * @param {Array|String} path - Path to the node to set.
-  * @param {ImmutablePluginStoreNode} newNode - New value of the node at the end of the path.
+  * @param {ImmutableStoreNode} newNode - New value of the node at the end of the path.
   *
   * @return {PluginStore} A new updated instance of this store.
   */
@@ -136,7 +136,7 @@ export class ImmutablePluginStore {
     path = Endpoints.identifierToArray(path)
 
     if (path.length == 0 || path.length == 1 && path[0] == '') {
-      return new ImmutablePluginStore(newNode)
+      return new ImmutableStore(newNode)
     }
 
     let result = newNode
@@ -150,7 +150,7 @@ export class ImmutablePluginStore {
       )
     })
 
-    return new ImmutablePluginStore(result)
+    return new ImmutableStore(result)
   }
 
   /**
@@ -190,7 +190,7 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * @see PluginStoreType.get
+  * @see PluginStore.type.get
   */
   get (endpoint = []) {
     let result = this._getNode(endpoint, EMPTY_NODE).get('value')
@@ -198,7 +198,7 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * @see PluginStoreType.push
+  * @see PluginStore.type.push
   */
   push (endpoint = [], ...values) {
     let oldNode = this._getNode(endpoint, EMPTY_NODE)
@@ -214,7 +214,7 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * @see PluginStoreType.delete
+  * @see PluginStore.type.delete
   */
   delete (endpoint = [], ...values) {
     if (this._hasNode(endpoint)) {
@@ -298,7 +298,7 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * @see PluginStoreType.set
+  * @see PluginStore.type.set
   */
   set (endpoint = [], value) {
     if (value == null) {
@@ -310,7 +310,7 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * @see PluginStoreType.filter
+  * @see PluginStore.type.filter
   */
   filter (endpoint = [], predicate) {
     let oldNode = this._getNode(endpoint)
@@ -366,7 +366,7 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * @see PluginStoreType.endpoints
+  * @see PluginStore.type.endpoints
   */
   endpoints (endpoint = []) {
     let rootNode = this._getNode(Endpoints.identifierToArray(endpoint))
@@ -416,9 +416,9 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * Transform a ImmutablePluginStoreNode into a endpoint stack state.
+  * Transform a ImmutableStoreNode into a endpoint stack state.
   *
-  * @param {ImmutablePluginStoreNode} node - Node to transform.
+  * @param {ImmutableStoreNode} node - Node to transform.
   * @param {String} [name = null] - Name of the node.
   *
   * @return An algorithm state.
@@ -432,7 +432,7 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * @see PluginStoreType.has
+  * @see PluginStore.type.has
   */
   has (endpoint = []) {
     let node = this._getNode(endpoint)
@@ -445,21 +445,21 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * @see PluginStoreType.clear
+  * @see PluginStore.type.clear
   */
   clear (endpoint = []) {
     return this._setNode(endpoint, EMPTY_NODE)
   }
 
   /**
-  * @see PluginStoreType.absolute
+  * @see PluginStore.type.absolute
   */
   absolute () {
     return this
   }
 
   /**
-  * @see PluginStoreType.onChange
+  * @see PluginStore.type.onChange
   */
   onChange (endpoint, callback) {
     throw new Error([
@@ -469,7 +469,7 @@ export class ImmutablePluginStore {
   }
 
   /**
-  * @see PluginStoreType.snapshot
+  * @see PluginStore.type.snapshot
   */
   snapshot (endpoint = []) {
     endpoint = Endpoints.identifierToArray(endpoint)
@@ -477,12 +477,12 @@ export class ImmutablePluginStore {
     if (endpoint.lenght == 0) {
       return this
     } else {
-      return new ImmutablePluginStore(this._getNode(endpoint))
+      return new ImmutableStore(this._getNode(endpoint))
     }
   }
 
   /**
-  * @see PluginStoreType.isImmutable
+  * @see PluginStore.type.isImmutable
   */
   isImmutable () {
     return true

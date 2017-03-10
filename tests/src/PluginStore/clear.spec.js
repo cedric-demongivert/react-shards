@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-export function isPluginStoreTypeClear (createStore) {
+export function isPluginStoreClear (createStore) {
   it('clear the store of its data', function () {
     let store = createStore().set('endpoints.first', 'azerty')
                              .set('endpoints.second', 5)

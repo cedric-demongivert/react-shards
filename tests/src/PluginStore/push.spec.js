@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-export function isPluginStoreTypePush (createStore) {
+export function isPluginStorePush (createStore) {
   it(
     ['allow to set a list of values into an empty',
      'endpoint and to retrieve them'].join(' '),
