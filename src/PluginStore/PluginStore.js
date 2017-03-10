@@ -31,6 +31,7 @@ export class PluginStore {
   */
   push (...params) {
     this.state = this.state.push(...params)
+    this._triggerChange(params[0])
     return this
   }
 
@@ -39,6 +40,7 @@ export class PluginStore {
   */
   delete (...params) {
     this.state = this.state.delete(...params)
+    this._triggerChange(params[0])
     return this
   }
 
@@ -47,6 +49,7 @@ export class PluginStore {
   */
   set (...params) {
     this.state = this.state.set(...params)
+    this._triggerChange(params[0])
     return this
   }
 
@@ -55,6 +58,7 @@ export class PluginStore {
   */
   filter (...params) {
     this.state = this.state.filter(...params)
+    this._triggerChange(params[0])
     return this
   }
 
@@ -77,6 +81,7 @@ export class PluginStore {
   */
   clear (...params) {
     this.state = this.state.clear(...params)
+    this._triggerChange(params[0])
     return this
   }
 
@@ -98,7 +103,7 @@ export class PluginStore {
   * @see PluginStoreType.onChange
   */
   onChange (endpoint, callback) {
-    let identifier = Endpoint.identifierToString(endpoint)
+    let identifier = Endpoints.identifierToString(endpoint)
 
     if (identifier == null) {
       this.rootListeners.push(callback)
@@ -106,16 +111,16 @@ export class PluginStore {
         this.rootListeners = this.rootListeners.filter((x) => x !== callback)
       }
     } else {
-      let listeners = this.listeners[endpoint] || []
+      let listeners = this.listeners[identifier] || []
       listeners.push(callback)
-      this.listeners[endpoint] = listeners
+      this.listeners[identifier] = listeners
       return () => {
-        this.listeners[endpoint] = this.listeners[endpoint].filter(
+        this.listeners[identifier] = this.listeners[identifier].filter(
           (x) => x !== callback
         )
 
-        if (this.listeners[endpoint].length === 0) {
-          delete this.listeners[endpoint]
+        if (this.listeners[identifier].length === 0) {
+          delete this.listeners[identifier]
         }
       }
     }
@@ -134,13 +139,16 @@ export class PluginStore {
     }
 
     for (let subEndpoint in this.listeners) {
-      if (endpoint.indexOf(subEndpoint) == 0) {
+      if (
+        subEndpoint.length < stringIdentifier.length &&
+        stringIdentifier.indexOf(subEndpoint) == 0
+      ) {
         let substore = new SubPluginStore(this, subEndpoint)
-        let updated = Endpoints.identifierToArray(
+        let subIdentifier = Endpoints.identifierToArray(
           stringIdentifier.substring(subEndpoint.length + 1)
         )
         for (let listener of this.listeners[subEndpoint]) {
-          listener(substore, updated)
+          listener(substore, subIdentifier)
         }
       }
     }

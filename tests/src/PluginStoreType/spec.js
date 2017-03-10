@@ -6,6 +6,8 @@ import { isPluginStoreTypeGet } from './get.spec'
 import { isPluginStoreTypeHas } from './has.spec'
 import { isPluginStoreTypePush } from './push.spec'
 import { isPluginStoreTypeSet } from './set.spec'
+import { isPluginStoreTypeSnapshot } from './snapshot.spec'
+import { isPluginStoreTypeOnChange } from './onChange.spec'
 
 import { expect } from 'chai'
 
@@ -15,35 +17,22 @@ export function isPluginStoreType (createStore) {
     expect(store).to.not.be.null
   })
 
-  describe('#clear', function () {
-    isPluginStoreTypeClear(createStore)
-  })
+  let suite = {
+    '#clear': isPluginStoreTypeClear,
+    '#delete': isPluginStoreTypeDelete,
+    '#endpoints': isPluginStoreTypeEndpoints,
+    '#filter': isPluginStoreTypeFilter,
+    '#get': isPluginStoreTypeGet,
+    '#has': isPluginStoreTypeHas,
+    '#push': isPluginStoreTypePush,
+    '#set': isPluginStoreTypeSet,
+    '#snapshot': isPluginStoreTypeSnapshot,
+    '#onChange': isPluginStoreTypeOnChange
+  }
 
-  describe('#delete', function () {
-    isPluginStoreTypeDelete(createStore)
-  })
-
-  describe('#endpoints', function () {
-    isPluginStoreTypeEndpoints(createStore)
-  })
-
-  describe('#filter', function () {
-    isPluginStoreTypeFilter(createStore)
-  })
-
-  describe('#get', function () {
-    isPluginStoreTypeGet(createStore)
-  })
-
-  describe('#has', function () {
-    isPluginStoreTypeHas(createStore)
-  })
-
-  describe('#push', function () {
-    isPluginStoreTypePush(createStore)
-  })
-
-  describe('#set', function () {
-    isPluginStoreTypeSet(createStore)
-  })
+  for (let methodName in suite) {
+    describe(methodName, function() {
+      suite[methodName](createStore)
+    })
+  }
 }

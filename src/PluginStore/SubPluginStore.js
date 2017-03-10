@@ -108,7 +108,7 @@ export class SubPluginStore {
   */
   snapshot (endpoint) {
     endpoint = this.rootEndpoint.concat(Endpoints.identifierToArray(endpoint))
-    return this.rootEndpoint.snapshot(endpoint)
+    return this.parentStore.snapshot(endpoint)
   }
 
   /**
@@ -116,7 +116,7 @@ export class SubPluginStore {
   */
   onChange (endpoint = [], callback) {
     endpoint = this.rootEndpoint.concat(Endpoints.identifierToArray(endpoint))
-    return this.parentStore.onChange(callback)
+    return this.parentStore.onChange(endpoint, callback)
   }
 
   /**
