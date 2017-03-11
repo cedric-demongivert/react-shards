@@ -4,7 +4,7 @@ import React from 'react'
 import { Plugins, PluginStore } from '../src/index'
 import { isPluginStore } from './src/PluginStore/spec'
 import { mount } from 'enzyme'
-import { expect } from 'chai'
+// import { expect } from 'chai'
 
 describe('<Plugins />', function () {
   it('is mountable', function () {
@@ -13,7 +13,7 @@ describe('<Plugins />', function () {
 
   isPluginStore(() => {
     let element = mount(
-      <Plugins store={new PluginStore.MutableStore()}/>
+      <Plugins store={new PluginStore.MutableStore()} />
     )
 
     return element.instance()

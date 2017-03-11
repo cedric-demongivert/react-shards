@@ -40,7 +40,7 @@ export class Plugins extends Component {
   * @see https://facebook.github.io/react/docs/react-component.html#componentDidUpdate
   */
   componentDidUpdate (prevProps) {
-    if (this.props.store != prevProps.store) {
+    if (this.props.store !== prevProps.store) {
       this.$unsubribe()
       this.props.store.onChange(null, this.onStoreChange)
       this.setState({

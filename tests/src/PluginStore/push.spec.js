@@ -4,8 +4,8 @@ import { expect } from 'chai'
 
 export function isPluginStorePush (createStore) {
   it(
-    ['allow to set a list of values into an empty',
-     'endpoint and to retrieve them'].join(' '),
+    [ 'allow to set a list of values into an empty',
+      'endpoint and to retrieve them' ].join(' '),
     function () {
       let store = createStore().push('endpoints', 'azerty')
                                .push('endpoints.first', 2)
@@ -29,9 +29,9 @@ export function isPluginStorePush (createStore) {
 
   it('change a previously setted value into a list of values', function () {
     let store = createStore().set('first', 'azerty')
-                             .push(['first'], 2, 'a', {'test' : 2})
+                             .push(['first'], 2, 'a', {'test': 2})
 
-    expect(store.get(['first'])).to.be.eql(['azerty', 2, 'a', {'test' : 2}])
+    expect(store.get(['first'])).to.be.eql(['azerty', 2, 'a', {'test': 2}])
   })
 
   it('is immutable if was declared as immutable', function () {

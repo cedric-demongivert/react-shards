@@ -5,7 +5,7 @@ import { Endpoint } from '../decorators/Endpoint'
 @Endpoint
 export class Namespace extends Component {
   render () {
-    return this.props.children
+    return this.props.children || null
   }
 }
 

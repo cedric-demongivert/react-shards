@@ -27,8 +27,8 @@ export function isPluginStoreSet (createStore) {
   })
 
   it(
-    ['must remove unused endpoints when an endpoint',
-     'is set to a null-like value'].join(' '),
+    [ 'must remove unused endpoints when an endpoint',
+      'is set to a null-like value' ].join(' '),
     function () {
       let store = createStore().set('endpoints.parent.child', 'lolcat')
                                .set('endpoints.other', 'other')

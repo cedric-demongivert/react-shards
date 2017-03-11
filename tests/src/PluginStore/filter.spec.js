@@ -17,11 +17,11 @@ export function isPluginStoreFilter (createStore) {
 
   it('remove an endpoint value if it match the filter', function () {
     expect(
-      store().filter('endpoints.first', (x) => x == 'lol')
+      store().filter('endpoints.first', (x) => x === 'lol')
              .get('endpoints.first')
     ).to.be.equal('azerty')
 
-    let updatedStore = store().filter('endpoints.first', (x) => x == 'azerty')
+    let updatedStore = store().filter('endpoints.first', (x) => x === 'azerty')
     expect(updatedStore.get('endpoints.first')).to.be.null
     expect(updatedStore.has('endpoints.first')).to.be.false
   })

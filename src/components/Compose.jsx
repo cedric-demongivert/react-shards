@@ -1,22 +1,8 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 
 import { Endpoint } from '../decorators/Endpoint'
-
-const STATUS_UNRESOLVED = 0
-const STATUS_RESOLVING = 1
-const STATUS_RESOLVED = 2
-
-const DEFAULT_COMPOSE_MAPPER = (Element, props, children) => {
-  if (React.isValidElement(Element)) {
-    return React.cloneElement(Element, props, children)
-  } else if (typeof(Element) == 'function') {
-    try {
-      return Element(props, children)
-    } catch (e) {
-      return (<Element {...props}>{children}</Element>)
-    }
-  }
-}
+import { BasicPluginRenderer } from '../decorators/BasicPluginRenderer'
+import { Map } from '../Map/index'
 
 /**
 * Compose a bunch of component in regard of their contexts.
@@ -27,139 +13,28 @@ const DEFAULT_COMPOSE_MAPPER = (Element, props, children) => {
 * </Compose>
 * ````
 */
+@BasicPluginRenderer
 @Endpoint
 export class Compose extends Component {
-  /**
-  * Resolve the component composition order and return it.
-  *
-  * @return {Array} The component composition order.
-  */
-  resolve () {
-    let result = []
-    let pluggedComponents = this.get()
-    let status = this.getBaseStatus(pluggedComponents)
-    let services = this.getContextMap(pluggedComponents)
-
-    for (let index in pluggedComponents) {
-      this.visit(index, {pluggedComponents, status, services, result})
+  renderPlugins (plugins = []) {
+    if (!Array.isArray(plugins)) {
+      plugins = [plugins]
     }
 
-    return result
-  }
-
-  /**
-  * Return an object with exposed contexts as key, and an index list of
-  * components that expose these contexts as value.
-  *
-  * @param {Array<component>} pluggedComponents - A list of components.
-  * @return {Object} A context map.
-  */
-  getContextMap (pluggedComponents) {
-    let result = {}
-
-    for (let index in pluggedComponents) {
-      let pluggedComponent = pluggedComponents[index]
-      for (let exposed of this.getExposedServices(pluggedComponent)) {
-        if (exposed in result) {
-          result[exposed].push(index)
-        } else {
-          result[exposed] = [index]
-        }
-      }
-    }
-
-    return result
-  }
-
-  getExposedServices (component) {
-    let componentType = this.getComponentType(component)
-    let result = []
-
-    if (componentType.childContextTypes) {
-      for (let exposed in componentType.childContextTypes) {
-        if (
-          componentType.contextTypes == null ||
-          !(exposed in componentType.contextTypes)
-        ) {
-          result.push(exposed)
-        }
-      }
-    }
-
-    if (result.length <= 0) {
-      result.push('none')
-    }
-
-    return result
-  }
-
-  getComponentType (component) {
-    let component = this.props.mapper(component, {}, null)
-    return component.type
-  }
-
-  getBaseStatus (components) {
-    let result = []
-
-    for (let index in components) {
-      result[index] = STATUS_UNRESOLVED
-    }
-
-    return result
-  }
-
-  visit (index, { pluggedComponents, status, services, result }) {
-    if (status[index] === STATUS_UNRESOLVED) {
-      status[index] = STATUS_RESOLVING
-
-      for (let dependency in this.getDependencies(pluggedComponents[index])) {
-        if (dependency in services) {
-          for (let provider of services[dependency]) {
-            this.visit(
-              provider, { pluggedComponents, status, services, result }
-            )
-          }
-        }
-      }
-
-      status[index] = STATUS_RESOLVED
-      result.push(pluggedComponents[index])
-    } else if (status[index] === STATUS_RESOLVING) {
-      throw new Error(
-        'Unable to compose components : invalid context dependency tree,',
-        'have-you a circular context dependency somewhere ?'
-      )
-    }
-  }
-
-  getDependencies (component) {
-    return this.getComponentType(component).contextTypes || {}
-  }
-
-  render () {
-    return this.compose(this.resolve())
+    return this.compose(plugins)
   }
 
   compose (components) {
     let result = this.props.children
 
     for (let index = 1; index <= components.length; ++index) {
-      result = this.props.mapper(
-        components[components.length - index], {}, result
-      )
+      result = components[components.length - index]({}, result)
     }
 
     return result
   }
-
 }
 
 Compose.defaultProps = {
-  'children': null,
-  'mapper': DEFAULT_COMPOSE_MAPPER
-}
-
-Compose.propTypes = {
-  'children': React.PropTypes.element,
-  'mapper': React.PropTypes.func.isRequired
+  'map': Map.toComponentFactory
 }

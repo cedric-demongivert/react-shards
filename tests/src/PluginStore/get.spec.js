@@ -24,9 +24,9 @@ export function isPluginStoreGet (createStore) {
 
     value = store.get('endpoints.second')
 
-    expect(value).to.be.eql({'some' : 2})
+    expect(value).to.be.eql({'some': 2})
     value.other = 'other'
-    expect(value).to.be.eql({'some' : 2, 'other': 'other'})
+    expect(value).to.be.eql({'some': 2, 'other': 'other'})
     expect(store.get('endpoints.second')).to.be.eql({'some': 2})
   })
 

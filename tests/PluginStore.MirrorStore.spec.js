@@ -35,7 +35,7 @@ describe('PluginStore.MirrorStore', function () {
         }
 
         let params = mirroredCalls[mirroredMethod]
-        mirror[mirroredMethod](... params)
+        mirror[mirroredMethod](...params)
 
         expect(reflected[mirroredMethod]).to.have.been.called.once
         expect(reflected[mirroredMethod]).to.have.been.called.with(...params)
@@ -64,7 +64,7 @@ describe('PluginStore.MirrorStore', function () {
         }
 
         let params = mirroredCalls[mirroredMethod]
-        mirror[mirroredMethod](... params)
+        mirror[mirroredMethod](...params)
 
         expect(reflected[mirroredMethod]).to.have.been.called.once
         expect(reflected[mirroredMethod]).to.have.been.called.with(...params)

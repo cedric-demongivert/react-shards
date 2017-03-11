@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+
 import { isPluginStoreClear } from './clear.spec'
 import { isPluginStoreDelete } from './delete.spec'
 import { isPluginStoreEndpoints } from './endpoints.spec'
@@ -31,7 +33,7 @@ export function isPluginStore (createStore) {
   }
 
   for (let methodName in suite) {
-    describe(methodName, function() {
+    describe(methodName, function () {
       suite[methodName](createStore)
     })
   }

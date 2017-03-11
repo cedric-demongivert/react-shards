@@ -1,6 +1,6 @@
 import { isString } from 'lodash'
 
-export function identifierToArray(endpoint = []) {
+export function identifierToArray (endpoint = []) {
   if (Array.isArray(endpoint)) {
     return endpoint
   } else if (endpoint == null) {
@@ -12,11 +12,11 @@ export function identifierToArray(endpoint = []) {
   }
 }
 
-export function identifierToString(endpoint = []) {
+export function identifierToString (endpoint = []) {
   if (isString(endpoint)) {
     return endpoint
   } else if (Array.isArray(endpoint)) {
-    if (endpoint.length == 0) {
+    if (endpoint.length === 0) {
       return null
     } else {
       return endpoint.join('.')

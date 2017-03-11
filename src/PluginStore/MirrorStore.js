@@ -1,5 +1,3 @@
-import Endpoints from './Endpoints'
-
 /**
 * @class MirrorStore
 *
@@ -53,43 +51,43 @@ export class MirrorStore {
   /**
   * @see PluginStore.type.push
   */
-  push (... params) {
-    return this._delegate('push', ... params)
+  push (...params) {
+    return this._delegate('push', ...params)
   }
 
   /**
   * @see PluginStore.type.delete
   */
-  delete (... params) {
-    return this._delegate('delete', ... params)
+  delete (...params) {
+    return this._delegate('delete', ...params)
   }
 
   /**
   * @see PluginStore.type.set
   */
-  set (... params) {
-    return this._delegate('set', ... params)
+  set (...params) {
+    return this._delegate('set', ...params)
   }
 
   /**
   * @see PluginStore.type.filter
   */
-  filter (... params) {
-    return this._delegate('filter', ... params)
+  filter (...params) {
+    return this._delegate('filter', ...params)
   }
 
   /**
   * @see PluginStore.type.endpoints
   */
-  endpoints (... params) {
-    return this.parentStore.endpoints(... params)
+  endpoints (...params) {
+    return this.parentStore.endpoints(...params)
   }
 
   /**
   * @see PluginStore.type.has
   */
-  has (... params) {
-    return this.parentStore.has(... params)
+  has (...params) {
+    return this.parentStore.has(...params)
   }
 
   /**
@@ -102,22 +100,22 @@ export class MirrorStore {
   /**
   * @see PluginStore.type.absolute
   */
-  absolute (... params) {
-    return this.parentStore.absolute(... params)
+  absolute (...params) {
+    return this.parentStore.absolute(...params)
   }
 
   /**
   * @see PluginStore.type.snapshot
   */
-  snapshot (... params) {
+  snapshot (...params) {
     return this.parentStore.snapshot(...params)
   }
 
   /**
   * @see PluginStore.type.onChange
   */
-  onChange (... params) {
-    return this.parentStore.onChange(... params)
+  onChange (...params) {
+    return this.parentStore.onChange(...params)
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Endpoints } from './Endpoints'
+import Endpoints from './Endpoints'
 import { ImmutableStore } from './ImmutableStore'
 import { SubStore } from './SubStore'
 import { MutableStore } from './MutableStore'

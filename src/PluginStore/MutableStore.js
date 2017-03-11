@@ -141,7 +141,7 @@ export class MutableStore {
     for (let subEndpoint in this.listeners) {
       if (
         subEndpoint.length < stringIdentifier.length &&
-        stringIdentifier.indexOf(subEndpoint) == 0
+        stringIdentifier.indexOf(subEndpoint) === 0
       ) {
         let substore = new SubStore(this, subEndpoint)
         let subIdentifier = Endpoints.identifierToArray(

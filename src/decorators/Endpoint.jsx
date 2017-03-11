@@ -25,9 +25,17 @@ export const Endpoint = (BaseClass) => {
 
     get pluginStore () {
       if (this.props.absolute) {
-        return this.pluginStore.absolute()
+        return this.context.pluginStore.absolute()
       } else {
-        return this.pluginStore
+        return this.context.pluginStore
+      }
+    }
+
+    _wrapReturn (store) {
+      if (store.isImmutable()) {
+        return new PluginStore.SubStore(store, this.props.name)
+      } else {
+        return this
       }
     }
 
@@ -39,8 +47,7 @@ export const Endpoint = (BaseClass) => {
     * @return {Array<String>} Unscoped endpoint.
     */
     prefix (endpoint = []) {
-      return this.prefix.concat(
-        PluginStore.Endpoints.identifierToArray(this.props.name),
+      return PluginStore.Endpoints.identifierToArray(this.props.name).concat(
         PluginStore.Endpoints.identifierToArray(endpoint)
       )
     }
@@ -49,21 +56,27 @@ export const Endpoint = (BaseClass) => {
     * @see PluginStore.type.push
     */
     push (endpoint = [], ...params) {
-      return this.pluginStore.push(this.prefix(endpoint), ...params)
+      return this._wrapReturn(
+        this.pluginStore.push(this.prefix(endpoint), ...params)
+      )
     }
 
     /**
     * @see PluginStore.type.delete
     */
     delete (endpoint = [], ...params) {
-      return this.pluginStore.delete(this.prefix(endpoint), ...params)
+      return this._wrapReturn(
+        this.pluginStore.delete(this.prefix(endpoint), ...params)
+      )
     }
 
     /**
     * @see PluginStore.type.filter
     */
     filter (endpoint = [], ...params) {
-      return this.pluginStore.filter(this.prefix(endpoint), ...params)
+      return this._wrapReturn(
+        this.pluginStore.filter(this.prefix(endpoint), ...params)
+      )
     }
 
     /**
@@ -77,7 +90,9 @@ export const Endpoint = (BaseClass) => {
     * @see PluginStore.type.set
     */
     set (endpoint = [], ...params) {
-      return this.pluginStore.set(this.prefix(endpoint), ...params)
+      return this._wrapReturn(
+        this.pluginStore.set(this.prefix(endpoint), ...params)
+      )
     }
 
     /**
@@ -98,7 +113,9 @@ export const Endpoint = (BaseClass) => {
     * @see PluginStore.type.clear
     */
     clear (endpoint = [], ...params) {
-      return this.pluginStore.clear(this.prefix(endpoint), ...params)
+      return this._wrapReturn(
+        this.pluginStore.clear(this.prefix(endpoint), ...params)
+      )
     }
 
     /**
@@ -111,15 +128,15 @@ export const Endpoint = (BaseClass) => {
     /**
     * @see PluginStore.type.snapshot
     */
-    snapshot (...params) {
-      return this.pluginStore.snapshot(...params)
+    snapshot (endpoint = [], ...params) {
+      return this.pluginStore.snapshot(this.prefix(endpoint), ...params)
     }
 
     /**
     * @see PluginStore.type.onChange
     */
-    onChange (...params) {
-      return this.pluginStore.onChange(...params)
+    onChange (endpoint = [], ...params) {
+      return this.pluginStore.onChange(this.prefix(endpoint), ...params)
     }
 
     /**
@@ -133,31 +150,31 @@ export const Endpoint = (BaseClass) => {
   /**
   * @see https://facebook.github.io/react/docs/context.html
   */
-  result.contextTypes = assign({}, BaseClass.contextTypes, {
+  result.contextTypes = assign({}, {
     'pluginStore': PluginStore.type.isRequired
-  })
+  }, BaseClass.contextTypes)
 
   /**
   * @see https://facebook.github.io/react/docs/context.html
   */
-  result.childContextTypes = assign({}, BaseClass.childContextTypes, {
+  result.childContextTypes = assign({}, {
     'pluginStore': PluginStore.type.isRequired
-  })
+  }, BaseClass.childContextTypes)
 
   /**
   * @see https://facebook.github.io/react/docs/typechecking-with-proptypes.html
   */
-  result.defaultProps = assign({}, BaseClass.defaultProps, {
+  result.defaultProps = assign({}, {
     'absolute': false
-  })
+  }, BaseClass.defaultProps)
 
   /**
   * @see https://facebook.github.io/react/docs/typechecking-with-proptypes.html
   */
-  result.propTypes = assign({}, BaseClass.propTypes, {
+  result.propTypes = assign({}, {
     'name': React.PropTypes.string.isRequired,
     'absolute': React.PropTypes.bool
-  })
+  }, BaseClass.propTypes)
 
   return result
 }

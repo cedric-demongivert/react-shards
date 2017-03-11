@@ -135,7 +135,7 @@ export class ImmutableStore {
   _setNode (path = [], newNode) {
     path = Endpoints.identifierToArray(path)
 
-    if (path.length == 0 || path.length == 1 && path[0] == '') {
+    if (path.length === 0 || path.length === 1 && path[0] === '') {
       return new ImmutableStore(newNode)
     }
 
@@ -173,9 +173,9 @@ export class ImmutableStore {
         }
       } else {
         if (
-          element.get('children').size > 1
-          || element.get('value') != null
-          || index < 0
+          element.get('children').size > 1 ||
+          element.get('value') != null ||
+          index < 0
         ) {
           return element.set(
             'children', element.get('children').delete(path[index + 1])
@@ -223,8 +223,7 @@ export class ImmutableStore {
       } else {
         return this._deleteNode(endpoint)
       }
-    }
-    else {
+    } else {
       return this
     }
   }
@@ -313,20 +312,24 @@ export class ImmutableStore {
   * @see PluginStore.type.filter
   */
   filter (endpoint = [], predicate) {
-    let oldNode = this._getNode(endpoint)
-    let oldValue = oldNode.get('value')
-    let newValue = null
+    if (this.has(endpoint)) {
+      let oldNode = this._getNode(endpoint)
+      let oldValue = oldNode.get('value')
+      let newValue = null
 
-    if (List.isList(oldValue)) {
-      newValue = this._filterList(oldValue, predicate)
-    } else {
-      newValue = this._filterValue(oldValue, predicate)
-    }
+      if (List.isList(oldValue)) {
+        newValue = this._filterList(oldValue, predicate)
+      } else {
+        newValue = this._filterValue(oldValue, predicate)
+      }
 
-    if (newValue == null) {
-      return this._deleteNode(endpoint)
+      if (newValue == null) {
+        return this._deleteNode(endpoint)
+      } else {
+        return this._setNode(endpoint, oldNode.set('value', newValue))
+      }
     } else {
-      return this._setNode(endpoint, oldNode.set('value', newValue))
+      return this
     }
   }
 
@@ -392,8 +395,7 @@ export class ImmutableStore {
       }
 
       return result
-    }
-    else {
+    } else {
       return []
     }
   }
@@ -474,7 +476,7 @@ export class ImmutableStore {
   snapshot (endpoint = []) {
     endpoint = Endpoints.identifierToArray(endpoint)
 
-    if (endpoint.lenght == 0) {
+    if (endpoint.lenght === 0) {
       return this
     } else {
       return new ImmutableStore(this._getNode(endpoint))

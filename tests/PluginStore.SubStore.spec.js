@@ -2,6 +2,7 @@
 
 import { PluginStore } from 'library'
 import { isPluginStore } from './src/PluginStore/spec'
+import { isSubStore } from './src/SubStore/spec'
 
 describe('PluginStore.SubStore', function () {
   describe('of a PluginStore.ImmutableStore', function () {
@@ -13,6 +14,13 @@ describe('PluginStore.SubStore', function () {
         )
       }
     )
+
+    isSubStore(
+      () => new PluginStore.ImmutableStore(),
+      (parentStore, path) => new PluginStore.SubStore(
+        parentStore, path
+      )
+    )
   })
 
   describe('of a PluginStore.MutableStore', function () {
@@ -23,6 +31,13 @@ describe('PluginStore.SubStore', function () {
           'endpoints.substore'
         )
       }
+    )
+
+    isSubStore(
+      () => new PluginStore.MutableStore(),
+      (parentStore, path) => new PluginStore.SubStore(
+        parentStore, path
+      )
     )
   })
 })
