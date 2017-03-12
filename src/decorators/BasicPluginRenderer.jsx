@@ -7,7 +7,7 @@ import { assign } from 'lodash'
 export const BasicPluginRenderer = (BaseClass) => {
   let result = class extends BaseClass {
     map (plugins) {
-      if (this.props.mapper) {
+      if (this.props.map) {
         if (Array.isArray(plugins)) {
           return plugins.map(this.props.map)
         } else {
@@ -19,7 +19,7 @@ export const BasicPluginRenderer = (BaseClass) => {
     }
 
     sort (plugins) {
-      if (this.props.sorter) {
+      if (this.props.sort) {
         if (Array.isArray(plugins)) {
           return this.props.sort(plugins)
         } else {
@@ -33,11 +33,11 @@ export const BasicPluginRenderer = (BaseClass) => {
     render () {
       if (this.props.custom != null) {
         return this.renderPlugins(this.props.custom(this.get()))
-      } else if (this.props.policy === 'map and sort') {
-        let plugins = this.map(this.sort(this.get()))
+      } else if (this.props.policy === 'sort and map') {
+        let plugins = this.sort(this.map(this.get()))
         return this.renderPlugins(plugins)
       } else {
-        let plugins = this.sort(this.map(this.get()))
+        let plugins = this.map(this.sort(this.get()))
         return this.renderPlugins(plugins)
       }
     }

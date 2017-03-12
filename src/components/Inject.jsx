@@ -3,19 +3,32 @@ import React, { Component } from 'react'
 import { Endpoint } from '../decorators/Endpoint'
 import { BasicPluginRenderer } from '../decorators/BasicPluginRenderer'
 import { InjectSlot } from './InjectSlot'
+import { Map } from '../Map/index.js'
+
+function toIndexedComponents (component, index) {
+  return React.cloneElement(component, {
+    'key': index
+  })
+}
 
 @BasicPluginRenderer
 @Endpoint
 export class Inject extends Component {
-  renderPlugins (elements = []) {
+  renderPlugins (elements) {
+    if (elements == null) {
+      elements = []
+    } else if (!Array.isArray(elements)) {
+      elements = [elements]
+    }
+
     if (elements.length > 0) {
       let children = this.inject(elements, this.props.children)
       if (elements.length > 0) {
-        this.injectLast(elements, children)
+        children = this.injectLast(elements, children)
       }
       return children
     } else {
-      return this.props.children
+      return this.props.children || null
     }
   }
 
@@ -26,12 +39,14 @@ export class Inject extends Component {
       } else if (elements.length === 1) {
         return elements[0]
       } else {
-        return (<div>{ elements }</div>)
+        return (<div>{elements.map(toIndexedComponents)}</div>)
       }
     } else {
       return React.cloneElement(
         component, {},
-        React.Children.toArray(component.props.children).concat(elements)
+        React.Children.toArray(component.props.children)
+                      .concat(elements)
+                      .map(toIndexedComponents)
       )
     }
   }
@@ -41,6 +56,8 @@ export class Inject extends Component {
       return null
     } else if (component.type === InjectSlot) {
       return this.handleInjectSlot(elements, component)
+    } else if ('pluginStore' in (component.type.contextTypes || {})) {
+      return component
     } else {
       return React.cloneElement(
         component, {},
@@ -63,9 +80,5 @@ export class Inject extends Component {
 }
 
 Inject.defaultProps = {
-  'children': null
-}
-
-Inject.propTypes = {
-  'children': React.PropTypes.element
+  'map': Map.toComponent
 }

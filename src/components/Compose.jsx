@@ -16,7 +16,11 @@ import { Map } from '../Map/index'
 @BasicPluginRenderer
 @Endpoint
 export class Compose extends Component {
-  renderPlugins (plugins = []) {
+  renderPlugins (plugins) {
+    if (plugins == null) {
+      plugins = []
+    }
+
     if (!Array.isArray(plugins)) {
       plugins = [plugins]
     }
@@ -25,7 +29,7 @@ export class Compose extends Component {
   }
 
   compose (components) {
-    let result = this.props.children
+    let result = this.props.children || null
 
     for (let index = 1; index <= components.length; ++index) {
       result = components[components.length - index]({}, result)
